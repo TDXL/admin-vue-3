@@ -9,7 +9,9 @@
       </el-col>
       <el-col :offset="16" :span="4">
         <div class="grid-content bg-purple">
-          <a href="#">退出</a>
+          <a
+          href="#"
+          @click.prevent="logout">退出</a>
         </div>
       </el-col>
     </el-row>
@@ -25,6 +27,28 @@
 export default {
   data () {
     return {}
+  },
+  methods: {
+    logout () {
+      // console.log('退出了')
+      this.$confirm('确认退出吗?', '退出提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        window.localStorage.removeItem('admin-token')
+        this.$router.push({
+          name: 'login'
+        })
+        this.$message({
+          type: 'success',
+          message: '退出成功!'
+        })
+      }).catch(() => {
+
+      })
+
+    }
   }
 }
 </script>
