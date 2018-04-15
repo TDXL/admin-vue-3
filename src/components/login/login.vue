@@ -1,6 +1,7 @@
 <template>
 <div class="login-wrap">
-  <el-form label-position="top" ref="form" :model="userForm" label-width="80px">
+  <el-form class="login-form" label-position="top" ref="form" :model="userForm" label-width="80px">
+    <h2 class="heading">用户登录</h2>
     <el-form-item label="用户名">
       <el-input v-model="userForm.username"></el-input>
     </el-form-item>
@@ -10,8 +11,7 @@
       v-model="userForm.password"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="login">立即创建</el-button>
-      <el-button>取消</el-button>
+      <el-button class="login-btn" type="primary" @click="login">立即登录</el-button>
     </el-form-item>
   </el-form>
 </div>
@@ -39,6 +39,7 @@ export default {
       // console.log(res)
       const data = res.data
       if (data.meta.status === 200) {
+        window.localStorage.setItem('admin-token', JSON.stringify(data.data))
         this.$router.push({
           name: 'home'
         })
@@ -49,4 +50,20 @@ export default {
 </script>
 
 <style>
+.login-wrap {
+  background-color: #324152;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-wrap .login-form {
+  background-color: #fff;
+  width: 400px;
+  padding: 30px;
+  border-radius: 5px;
+}
+.login-btn {
+  width: 100%;
+}
 </style>
