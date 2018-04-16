@@ -19,6 +19,7 @@
 
 <script>
 import axios from 'axios'
+import {saveUserInfo} from '@/assets/js/auth'
 export default {
   data () {
     return {
@@ -39,7 +40,8 @@ export default {
       // console.log(res)
       const data = res.data
       if (data.meta.status === 200) {
-        window.localStorage.setItem('admin-token', JSON.stringify(data.data))
+        // window.localStorage.setItem('user-info', JSON.stringify(data.data))
+        saveUserInfo(data.data)
         this.$router.push({
           name: 'home'
         })

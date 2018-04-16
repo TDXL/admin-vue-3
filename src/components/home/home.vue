@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import {removeUserInfo} from '@/assets/js/auth'
 export default {
   data () {
     return {}
@@ -85,7 +86,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        window.localStorage.removeItem('admin-token')
+        // window.localStorage.removeItem('admin-token')
+        removeUserInfo()
         this.$router.push({
           name: 'login'
         })
