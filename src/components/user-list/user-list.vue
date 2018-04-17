@@ -55,14 +55,14 @@
 
 <script>
 // import axios from 'axios'
-import http from '@/assets/js/http'
+// import http from '@/assets/js/http'
 import {getToken} from '@/assets/js/auth'
 
 export default {
   async created () {
     // const {token} = JSON.parse(window.localStorage.getItem('user-info'))
     const token = getToken()
-    const res = await http.get('/users', {
+    const res = await this.$http.get('/users', {
       // 配置请求头携带身份令牌
       headers: {
         Authorization: token
