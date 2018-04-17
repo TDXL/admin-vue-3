@@ -44,11 +44,11 @@
   <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="4"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :current-page="currentPage"
+      :page-sizes="[1, 2, 3, 4]"
+      :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400">
+      :total="totalSize">
     </el-pagination>
 </div>
 </template>
@@ -62,35 +62,47 @@ export default {
   async created () {
     // const {token} = JSON.parse(window.localStorage.getItem('user-info'))
     // const token = getToken()
-    const res = await this.$http.get('/users', {
-      // 配置请求头携带身份令牌
-      // headers: {
-      //   Authorization: token
-      // },
-      // 参数
-      params: {
-        pagenum: 1,
-        pagesize: 5
-      }
-    })
-    // console.log(res)
-    this.tableData = res.data.data.users
+    this.loadUsersByPage(1)
   },
   data () {
     return {
       tableData: [],
-      searchText: ''
+      searchText: '',
+      totalSize: 0,
+      currentPage: 1,
+      pageSize: 1
     }
   },
   methods: {
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
+    handleSizeChange (pageSize) {
+      // console.log(`每页 ${val} 条`)
+      // 每页大小改变后，默认加载第一页
+      this.loadUsersByPage(1, pageSize)
+      this.currentPage = 1
+      this.pageSize = pageSize
+      // console.log(this.currentPage)
     },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+    handleCurrentChange (currentPage) {
+      // console.log(`当前页: ${val}`)
+      this.loadUsersByPage(currentPage, this.pageSize)
+      this.currentPage = currentPage
+      // console.log(this.currentPage)
+    },
+    async loadUsersByPage (page, pageSize = 1) {
+      const res = await this.$http.get('/users', {
+        // 参数
+        params: {
+          pagenum: page,
+          pagesize: pageSize
+        }
+      })
+      // console.log(res)
+      const {users, total} = res.data.data
+
+      this.tableData = users
+      this.totalSize = total
     }
   }
-
 }
 </script>
 
