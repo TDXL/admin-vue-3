@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 import {saveUserInfo} from '@/assets/js/auth'
 export default {
   data () {
@@ -36,7 +36,7 @@ export default {
       // 请求
       // 交互
       // console.log(this.userForm)
-      const res = await axios.post('http://localhost:8888/api/private/v1/login', this.userForm)
+      const res = await this.$http.post('/login', this.userForm)
       // console.log(res)
       const data = res.data
       if (data.meta.status === 200) {
