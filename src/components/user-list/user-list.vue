@@ -14,11 +14,17 @@
   <el-row class="user-list-search">
     <el-col :span="8">
       <el-input placeholder="请输入内容" v-model="searchText" class="input-with-select">
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-button
+        slot="append"
+        icon="el-icon-search"
+        @click="handleSearch"></el-button>
       </el-input>
     </el-col>
     <el-col :span="4">
-      <el-button type="success" plain>成功按钮</el-button>
+      <el-button
+      type="success"
+      plain
+      @click="dialogFormVisible = true">成功按钮</el-button>
     </el-col>
   </el-row>
   <!-- 列表 -->
@@ -49,6 +55,7 @@
           close-transition>{{scope.row.tag}}</el-tag> -->
         <!-- scope.row 可以拿到当前遍历行对象 -->
         <el-switch
+          @change="(val) => {handleStateChange(val, scope.row)}"
           v-model="scope.row.mg_state"
           active-color="#13ce66"
           inactive-color="#ff4949">
@@ -69,12 +76,33 @@
   <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[1, 2, 3, 4]"
-      :page-size="pageSize"
+      :current-page.sync="currentPage"
+      :page-sizes="[3, 5, 8, 10]"
+      :page-size.sync="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="totalSize">
-    </el-pagination>
+  </el-pagination>
+  <!-- 添加用户对话框 -->
+  <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+    <el-form :model="userForm">
+      <el-form-item label="用户名" label-width="120px">
+        <el-input v-model="userForm.username" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" label-width="120px">
+        <el-input v-model="userForm.password" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="邮箱" label-width="120px">
+        <el-input v-model="userForm.email" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="电话" label-width="120px">
+        <el-input v-model="userForm.mobile" auto-complete="off"></el-input>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <el-button type="primary" @click="handleAddUser">确 定</el-button>
+    </div>
+</el-dialog>
 </div>
 </template>
 
@@ -85,8 +113,6 @@
 
 export default {
   async created () {
-    // const {token} = JSON.parse(window.localStorage.getItem('user-info'))
-    // const token = getToken()
     this.loadUsersByPage(1)
   },
   data () {
@@ -95,30 +121,60 @@ export default {
       searchText: '',
       totalSize: 0,
       currentPage: 1,
-      pageSize: 1
+      pageSize: 5,
+      dialogFormVisible: false,
+      userForm: {
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
+      }
     }
   },
   methods: {
     handleSizeChange (pageSize) {
-      // console.log(`每页 ${val} 条`)
       // 每页大小改变后，默认加载第一页
       this.loadUsersByPage(1, pageSize)
       this.currentPage = 1
       this.pageSize = pageSize
-      // console.log(this.currentPage)
     },
     handleCurrentChange (currentPage) {
-      // console.log(`当前页: ${val}`)
       this.loadUsersByPage(currentPage, this.pageSize)
-      this.currentPage = currentPage
-      // console.log(this.currentPage)
+      // this.currentPage = currentPage
     },
-    async loadUsersByPage (page, pageSize = 1) {
+    handleSearch () {
+      this.loadUsersByPage(1)
+    },
+    async handleStateChange (state, user) {
+      const {id: userId} = user
+      const data = await this.$http.put(`/users/${userId}/state/${state}`)
+      if (data.status === 200) {
+        this.$message({
+          type: 'success',
+          message: `用户状态${state ? '启用' : '禁用'}成功`
+        })
+      }
+    },
+    async handleAddUser () {
+      // console.log(this.userForm)
+      const res = await this.$http.post('/users', this.userForm)
+      console.log(res)
+      if (res.data.meta.status === 201) {
+        this.$message({
+          type: 'success',
+          message: '添加用户成功'
+        })
+        this.dialogFormVisible = false
+        this.loadUsersByPage(this.currentPage, this.pageSize)
+      }
+    },
+    async loadUsersByPage (page, pageSize = this.pageSize) {
       const res = await this.$http.get('/users', {
         // 参数
         params: {
           pagenum: page,
-          pagesize: pageSize
+          pagesize: pageSize,
+          query: this.searchText
         }
       })
       // console.log(res)
