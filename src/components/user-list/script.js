@@ -13,10 +13,16 @@ export default {
       totalSize: 0,
       currentPage: 1,
       pageSize: 5,
-      dialogFormVisible: false,
+      dialogFormVisible: false, // 控制添加用户表单
+      dialogEditFormVisible: false, // 控制编辑用户表单
       userForm: {
         username: '',
         password: '',
+        email: '',
+        mobile: ''
+      },
+      editUserForm: {
+        username: '',
         email: '',
         mobile: ''
       },
@@ -127,6 +133,23 @@ export default {
       })
     },
 
+    /**
+     * 处理编辑用户表单弹出
+     */
+
+    async showEditUser (user) {
+      this.dialogEditFormVisible = true
+      const res = await this.$http.get(`/users/${user.id}`)
+      this.editUserForm = res.data.data
+    },
+
+    /**
+     * 处理编辑用户表单提交
+     */
+
+    async handleEditUser (user) {
+
+    },
     async loadUsersByPage (page, pageSize = this.pageSize) {
       const res = await this.$http.get('/users', {
         // 参数
