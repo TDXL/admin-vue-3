@@ -67,7 +67,11 @@
       width="200">
       <template slot-scope="scope">
         <el-button size="mini" type="primary" icon="el-icon-edit" circle></el-button>
-        <el-button size="mini" type="danger" icon="el-icon-delete" circle></el-button>
+        <el-button
+        size="mini"
+        type="danger"
+        icon="el-icon-delete"
+        @click="handleDeleteUser(scope.row)"></el-button>
         <el-button size="mini" type="danger" icon="el-icon-delete" circle></el-button>
       </template>
     </el-table-column>
@@ -177,6 +181,11 @@ export default {
         })
       }
     },
+
+    /**
+     * 处理添加用户
+     */
+
     async handleAddUser () {
       // console.log(this.userForm)
       this.$refs['addUserForm'].validate(async (valid) => {
@@ -206,6 +215,33 @@ export default {
       // resetForm ('addUserForm') {
       //   this.$refs['addUserForm'].resetFields()
       // }
+    },
+
+    /**
+     * 处理删除用户
+     */
+
+    async handleDeleteUser (user) {
+      // console.log(user)
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const res = await this.$http.delete(`/users/${user.id}`)
+        if (res.data.meta.status === 200) {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.loadUsersByPage(this.currentPage)
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
 
     async loadUsersByPage (page, pageSize = this.pageSize) {
