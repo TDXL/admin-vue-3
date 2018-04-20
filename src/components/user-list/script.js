@@ -147,8 +147,17 @@ export default {
      * 处理编辑用户表单提交
      */
 
-    async handleEditUser (user) {
-
+    async handleEditUser () {
+      const {id: userId} = this.editUserForm
+      const res =await this.$http.put(`/users/${userId}`, this.editUserForm)
+      if (res.data.meta.status === 200) {
+        this.$message({
+          type: 'success',
+          message: '更新用户成功'
+        })
+        this.dialogEditFormVisible = false
+        this.loadUsersByPage(this.currentPage)
+      }
     },
     async loadUsersByPage (page, pageSize = this.pageSize) {
       const res = await this.$http.get('/users', {
