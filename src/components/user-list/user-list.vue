@@ -83,18 +83,22 @@
       :total="totalSize">
   </el-pagination>
   <!-- 添加用户对话框 -->
-  <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
-    <el-form :model="userForm">
-      <el-form-item label="用户名" label-width="120px">
+  <el-dialog title="添加用户" :visible.sync="dialogFormVisible">
+    <el-form
+    :model="userForm"
+    :rules="addUserFormRules"
+    ref="addUserForm"
+    class="demo-addUserFormRules">
+      <el-form-item label="用户名" prop="username" label-width="120px">
         <el-input v-model="userForm.username" auto-complete="off"></el-input>
       </el-form-item>
-      <el-form-item label="密码" label-width="120px">
+      <el-form-item label="密码" prop="password" label-width="120px">
         <el-input v-model="userForm.password" auto-complete="off"></el-input>
       </el-form-item>
-      <el-form-item label="邮箱" label-width="120px">
+      <el-form-item label="邮箱" prop="email" label-width="120px">
         <el-input v-model="userForm.email" auto-complete="off"></el-input>
       </el-form-item>
-      <el-form-item label="电话" label-width="120px">
+      <el-form-item label="电话" prop="mobile" label-width="120px">
         <el-input v-model="userForm.mobile" auto-complete="off"></el-input>
       </el-form-item>
     </el-form>
@@ -128,6 +132,24 @@ export default {
         password: '',
         email: '',
         mobile: ''
+      },
+      addUserFormRules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        mobile: [
+          { required: true, message: '请输入电话', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -157,17 +179,26 @@ export default {
     },
     async handleAddUser () {
       // console.log(this.userForm)
-      const res = await this.$http.post('/users', this.userForm)
-      console.log(res)
-      if (res.data.meta.status === 201) {
-        this.$message({
-          type: 'success',
-          message: '添加用户成功'
-        })
-        this.dialogFormVisible = false
-        this.loadUsersByPage(this.currentPage, this.pageSize)
-      }
+      this.$refs['addUserForm'].validate(async (valid) => {
+        if (!valid) {
+          return false
+        }
+        const res = await this.$http.post('/users', this.userForm)
+        console.log(res)
+        if (res.data.meta.status === 201) {
+          this.$message({
+            type: 'success',
+            message: '添加用户成功'
+          })
+          this.dialogFormVisible = false
+          this.loadUsersByPage(this.currentPage, this.pageSize)
+        }
+      })
+      // resetForm ('addUserForm') {
+      //   this.$refs['addUserForm'].resetFields()
+      // }
     },
+
     async loadUsersByPage (page, pageSize = this.pageSize) {
       const res = await this.$http.get('/users', {
         // 参数
