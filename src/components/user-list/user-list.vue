@@ -24,7 +24,7 @@
       <el-button
       type="success"
       plain
-      @click="dialogFormVisible = true">成功按钮</el-button>
+      @click="dialogFormVisible = true">添加用户</el-button>
     </el-col>
   </el-row>
   <!-- 列表 -->
@@ -136,7 +136,7 @@ export default {
       addUserFormRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur' }
+          { min: 3, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
@@ -144,11 +144,11 @@ export default {
         ],
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 10, max: 18, message: '长度在 10 到 18 个字符', trigger: 'blur' }
         ],
         mobile: [
           { required: true, message: '请输入电话', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 8, max: 16, message: '长度在 8 到 16 个字符', trigger: 'blur' }
         ]
       }
     }
@@ -190,8 +190,17 @@ export default {
             type: 'success',
             message: '添加用户成功'
           })
+
+          // 关闭对话框
           this.dialogFormVisible = false
+
+          // 重新加载用户列表
           this.loadUsersByPage(this.currentPage, this.pageSize)
+
+          // 清空表单
+          for (let key in this.userForm) {
+            this.userForm[key] = ''
+          }
         }
       })
       // resetForm ('addUserForm') {
