@@ -51,13 +51,11 @@ export default {
   },
   methods: {
     async loadRights () {
-      setTimeout(async () => {
-        const res = await this.$http.get('/rights/list')
-        if (res.data.meta.status === 200) {
-          this.tableData = res.data.data
-          this.loading = false
-        }
-      },1000)
+      const res = await this.$http.get('/rights/list')
+      if (res.data.meta.status === 200) {
+        this.tableData = res.data.data
+        this.loading = false
+      }
     }
   }
 }
