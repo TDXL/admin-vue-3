@@ -60,8 +60,13 @@ export default {
     handleSearch () {
       this.loadUsersByPage(1)
     },
-    async handleStateChange (state, user) {
-      const {id: userId} = user
+
+    /**
+     * 处理修改用户状态
+     */
+
+    async handleStateChange (user) {
+      const {id: userId, mg_state: state} = user
       const data = await this.$http.put(`/users/${userId}/state/${state}`)
       if (data.status === 200) {
         this.$message({

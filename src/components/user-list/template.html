@@ -54,7 +54,7 @@
           close-transition>{{scope.row.tag}}</el-tag> -->
         <!-- scope.row 可以拿到当前遍历行对象 -->
         <el-switch
-          @change="(val) => {handleStateChange(val, scope.row)}"
+          @change="handleStateChange(scope.row)"
           v-model="scope.row.mg_state"
           active-color="#13ce66"
           inactive-color="#ff4949">
