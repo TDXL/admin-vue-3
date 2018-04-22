@@ -52,6 +52,34 @@ export default {
 
       // 重新加载
       this.loadRoles()
+    },
+
+    /**
+     * 删除角色
+     */
+
+    async handleRemoveRole (role) {
+
+      this.$confirm('确定删除该角色吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+          const res = await this.$http.delete(`/roles/${role.id}`)
+          const {data, meta} = res.data
+          if (meta.status === 200) {
+            this.$message({
+              type: 'success',
+              message: '删除角色成功'
+            })
+            this.loadRoles()
+          }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   }
 }
