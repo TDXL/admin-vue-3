@@ -9,6 +9,12 @@ export default {
       addRoleForm: {
         roleName: '',
         roleDesc: ''
+      },
+      editRoleDialog: false,
+      editRoleForm: {
+        roleId: '',
+        roleName: '',
+        roleDesc: ''
       }
     }
   },
@@ -80,6 +86,32 @@ export default {
             message: '已取消删除'
           })
         })
+    },
+
+    /**
+     * 编辑角色
+     */
+    async showEditRoleDialog (role) {
+      // this.editRoleForm = role
+      // 根据id查询角色
+      const res = await this.$http.get(`/roles/${role.id}`)
+      const {data, meta} = res.data
+      if (meta.status === 200) {
+        this.editRoleForm = data
+        this.editRoleDialog = true
+      }
+    },
+    async handleEditRole () {
+      const res = await this.$http.put(`roles/${this.editRoleForm.roleId}`, this.editRoleForm)
+      const {data, meta} = res.data
+      if (meta.status === 200) {
+        this.$message({
+          type: 'success',
+          message: '更新角色成功'
+        })
+        this.editRoleDialog = false
+        this.loadRoles()
+      }
     }
   }
 }
